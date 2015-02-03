@@ -1,0 +1,75 @@
+####greg rank http://gregrank.com
+
+These scripts will return a message similar to the one below for each domain name
+that you want to check the status for:
+
+HTTP/1.1 200 OK (<----- this means the domain is up and working)
+Date: Sat, 01 Sep 2012 22:45:22 GMT
+Content-Type: text/html; charset=utf-8
+Connection: keep-alive
+Server: Nginx / Varnish
+Set-Cookie: ca6466c7a66b0c454f64373a6997d0ea=12f6438dc84dc063e49028240fe98995; path=/
+P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"
+Expires: Mon, 1 Jan 2011 00:00:00 GMT
+Last-Modified: Sat, 01 Sep 2012 22:45:22 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Vary: Accept-Encoding
+
+These scripts have been tested and work on Ubuntu v10.04 and v12.04
+
+Install the following packages if you don't already have them:
+
+sudo apt-get install curl
+
+sudo apt-get install ssmtp
+
+sudo apt-get install mailutils
+
+Configure ssmpt file /etc/ssmtp/ssmpt.conf as follows:
+###this will work to send email even if your IP address is blocked at spamhaus.org
+
+root=your_email@gmail.com
+Mailhub=smtp.gmail.com:465
+RewriteDomain=gmail.com
+AuthUser=your_gmail_username # (your_email@gmail.com )
+AuthPass=your_gmail_password # (you might have to generate an application password in google: https://support.google.com/mail/answer/1173270?hl=en)
+FromLineOverride=Yes
+UseTLS=Yes
+
+####Create a text file named ping.sh:
+
+#!/bin/sh
+curl -I http://domainame.com
+curl -I http://domainame.com
+curl -I http://domainame.com
+###END
+
+###put as many domains here as you neeed
+###save the file and change permissions to 755 (sudo chmod 755)
+
+###Create a file named ping3.sh add the following:
+#!/bin/sh
+/path-to-file/ping.sh>home
+mail < home your_email@any_domain.com -s "Ping" (modify this field to the valid email address you want to recieve your messages: your_email@any_domain.com)
+
+###End 
+
+###save the file and change permissions to 755 (sudo chmod 755)
+
+Setup crontab
+crontab -e
+###will make the script run at 2:15am each day
+
+15 2 * * * /path_to_file/ping3.sh
+
+###I get email every morning telling me if my domains are OK (200) or if there is a 404 error not found...
+
+####greg rank http://gregrank.com
+
+
+
+
+
+
+
